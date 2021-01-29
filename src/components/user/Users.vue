@@ -24,25 +24,25 @@
     <!--  用户表格区域-->
       <el-table :data="userlist" border stripe>
         <!-- stripe: 斑马条纹
-        border：边框-->
-        <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="username" label="姓名"></el-table-column>
-        <el-table-column prop="email" label="邮箱"></el-table-column>
-        <el-table-column prop="mobile" label="电话"></el-table-column>
-        <el-table-column prop="role_name" label="角色"></el-table-column>
-        <el-table-column label="状态">
+        border：边框-->align="center"
+        <el-table-column type="index" label="序号" align="center"></el-table-column>
+        <el-table-column prop="username" label="姓名" align="center"></el-table-column>
+        <el-table-column prop="email" label="邮箱" align="center"></el-table-column>
+        <el-table-column prop="mobile" label="电话" align="center"></el-table-column>
+        <el-table-column prop="role_name" label="角色" align="center"></el-table-column>
+        <el-table-column label="状态" align="center">
          <!-- 作用域插槽 slot-scope属性 获取本行所有数据-->
           <template slot-scope="scope">
             <!--{{scope.row}}-->
             <el-switch v-model="scope.row.mg_state"  @change="userStatusChanged(scope.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" size="mini" circle @click="showEditDialog(scope.row.id)"></el-button>
             <el-button type="danger" icon="el-icon-delete" size="mini" circle @click="removeUserById(scope.row.id)"></el-button>
             <el-tooltip class="item" effect="dark" content="角色分配" :enterable="false" placement="top">
-              <el-button type="warning" icon="el-icon-setting" size="mini" circle @click="showSetRole(scope.row)"></el-button>
+              <el-button type="warning" icon="el-icon-setting" size="mini" circle @click="allotRole(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -91,9 +91,33 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-    <el-button @click="editDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="editUserInfo">确 定</el-button>
-  </span>
+          <el-button @click="editDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editUserInfo">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!--分配角色对话框区域-->
+      <el-dialog title="角色分配" :visible.sync="setRoleDialogVisible" width="25%">
+          <!--用户信息区域-->
+        <div class="divbottom">
+          <el-input  v-model="userInfo.username" disabled>
+            <template slot="prepend">当前用户</template>
+          </el-input>
+        </div>
+        <div class="divbottom">
+          <el-input  v-model="userInfo.role_name" disabled>
+            <template slot="prepend">当前角色</template>
+          </el-input>
+        </div>
+        <p>
+        选择新的角色:
+          <el-select v-model="selectRoleId">
+            <el-option v-for="item in rolesList" :key="item.id" :label="item.roleName" :value="item.id">
+            </el-option>
+          </el-select></p>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveRole">确 定</el-button>
+        </span>
       </el-dialog>
     </div>
 </template>
@@ -131,12 +155,21 @@ export default {
         // 每页显示多少数据
         pagesize: 2
       },
+      // 用户列表数据
       userlist: [],
       total: 0,
+      // 用户信息对象
+      userInfo: {},
+      // 所有角色数据
+      rolesList: [],
+      // 下拉框选中的角色id值
+      selectRoleId: '',
       // 控制添加用户对话框的显示与隐藏
       addDialogVisible: false,
       // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
+      // 控制分配角色对话框的显示与隐藏
+      setRoleDialogVisible: false,
       // 添加用户表单数据对象
       addUserForm: {
         username: '',
@@ -277,6 +310,7 @@ export default {
       })
     },
     async removeUserById (id) {
+      // 点击确定返回值为 ‘confirm’ 点击取消返回值为 ‘cancle’
       const confirmResult = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -292,11 +326,33 @@ export default {
       }
       this.$message.success('删除用户成功')
       this.getUserList()
+    },
+    // 监听角色分配按钮事件
+    async allotRole (userInfo) {
+      this.userInfo = userInfo
+      // 发起请求获取角色列表数据
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取角色列表失败')
+      }
+      this.rolesList = res.data
+      this.setRoleDialogVisible = true
+    },
+    async saveRole () {
+      const { data: res } = await this.$http.put(`users/${this.userInfo.id}/role`, { rid: this.selectRoleId })
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新用户角色失败！')
+      }
+      this.$message.success('更新用户角色成功')
+      this.setRoleDialogVisible = false
+      this.getUserList()
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+.divbottom {
+  margin-bottom: 10px;
+}
 </style>

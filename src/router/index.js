@@ -8,6 +8,10 @@ import Home from '../components/Home'
 import Welcome from '../components/Welcome'
 // 用户列表组件
 import Users from '../components/user/Users'
+// 权限列表组件
+import Rights from '../components/power/rights'
+// 用户角色组件
+import Roles from '../components/power/roles'
 
 Vue.use(VueRouter)
 
@@ -28,7 +32,9 @@ const routes = [
     // 定义子路由
     children: [
       { path: '/welcome', component: Welcome },
-      { path: '/users', component: Users }
+      { path: '/users', component: Users },
+      { path: '/rights', component: Rights },
+      { path: '/roles', component: Roles }
     ]
   }
 
