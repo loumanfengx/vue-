@@ -14,7 +14,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'space-before-function-paren': 0,
-    //配置camelcase选项
-    'camelcase': [0, {properties: 'always'}]
+    // 配置camelcase选项
+    camelcase: [0, { properties: 'always' }]
   }
 }

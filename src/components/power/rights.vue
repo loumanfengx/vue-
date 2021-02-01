@@ -10,7 +10,7 @@
       <el-card>
         <!--表格区域-->
         <template>
-          <el-table :data="rightsList" border stripe style="width: 100%">
+          <el-table :data="rightsList" border stripe >
             <el-table-column type="index" label="序号" align="center"></el-table-column>
             <el-table-column prop="authName" label="权限名称" align="center"></el-table-column>
             <el-table-column prop="path" label="路径" align="center"></el-table-column>

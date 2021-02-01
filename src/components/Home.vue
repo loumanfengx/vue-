@@ -4,10 +4,11 @@
     <!--头部区域-->
     <el-header>
       <div>
-        <img src="../assets/logo.png" alt />
+        <img src="../assets/logo.png"/>
         <span>电商后台管理系统</span>
       </div>
-      <el-button type="info" @click="logout">退出</el-button></el-header>
+      <el-button type="info" @click="logout">退出</el-button>
+    </el-header>
     <el-container>
       <!--侧边栏区域-->
       <el-aside :width="isCollapse ? '64px':'200px' ">
