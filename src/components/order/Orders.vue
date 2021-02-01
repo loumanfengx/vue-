@@ -148,7 +148,7 @@ export default {
     },
     // 点击物流按钮触发函数
     async showProgressDialogVisible () {
-      // api 接口异常，不能发起请求
+      // api 接口异常，不能发起请求wq
       /* const { data: res } = await this.$http.get('kuaidi/1106975712662')
       if (res.meta.status !== 200) {
         this.$message.error('获取物流信息失败！')
